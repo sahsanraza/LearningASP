@@ -1,0 +1,74 @@
+﻿@model IEnumerable<LearningASP.DataServices.Customer>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+
+    <div class="row ">
+        <div class="col-md-12">
+            <h2>
+                Customers<a class="pull-right" href="@Url.Action("Create","Customer")"><span class=" btn btn-sm btn-primary">Add New</span></a>
+            </h2>
+            <div class="table-responsive">
+                <table class="table table-responsive">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.CustomerName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Phone)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Address)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Status)
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+
+                    @foreach (var cs in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => cs.CustomerName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => cs.Phone)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => cs.Address)
+                            </td>
+
+                            @{
+                                if (cs.Status == "Active")
+                                {
+                                    <td>
+                                        <span class="label label-success">@cs.Status</span>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <span class="label label-danger">@cs.Status</span>
+                                    </td>
+                                }
+                            }
+
+                            <td>
+                                <a class="btn btn-sm btn-primary" href="@Url.Action("Edit", "Customer", new { id = cs.CustomerID })">Edit</a>
+                                <a class="btn btn-sm btn-danger" href="@Url.Action("Delete", "Customer", new { id = cs.CustomerID })">Delete</a>
+
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
