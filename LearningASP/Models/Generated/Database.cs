@@ -269,10 +269,6 @@ namespace LearningASP.DataServices
 
 		[Column] public int? ItemID { get; set; }
 
-
-
-
-
 		[Column] public decimal Price { get; set; }
 
 

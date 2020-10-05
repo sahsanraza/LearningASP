@@ -19,23 +19,34 @@ namespace LearningASP.Controllers
             List<OrderViewModel> OrderDetailInfo = new List<OrderViewModel>();
             foreach (Order ord in orders)
             {
-                OrderViewModel obj = new OrderViewModel();
-                obj.OrderID = ord.OrderID;
-                obj.OrderDate = ord.OrderDate;
-                obj.TotalPrice = ord.TotalPrice;
-                obj.Description = ord.Description;
-                obj.Status = ord.Status;
+                OrderViewModel ovm = new OrderViewModel();
+                ovm.OrderID = ord.OrderID;
+                ovm.OrderDate = ord.OrderDate;
+                ovm.TotalPrice = ord.TotalPrice;
+                ovm.Quantity = ord.Quantity;
+                ovm.Description = ord.Description;
+                ovm.Status = ord.Status;
                 Customer cs = DatabaseHelper.Instance.GetCustomer((int)ord.CustomerID);
-                obj.CustomerName = cs.CustomerName;
-
-                List<OrderDetail> items = DatabaseHelper.Instance.GetOrderItems(ord.OrderID);
+                ovm.CustomerName = cs.CustomerName;
+                ovm.CustomerID = cs.CustomerID;
+                List<OrderDetail> items=DatabaseHelper.Instance.GetOrderItems(ord.OrderID);
+                ovm.Items = new List<OrderDetail>();
                 foreach (OrderDetail odItem in items)
                 {
-                    obj.Items.Add(odItem);
+                    ovm.Items.Add(odItem);
                 }
-                OrderDetailInfo.Add(obj);
+                OrderDetailInfo.Add(ovm);
             }
             return View(OrderDetailInfo);
         }
+        public ActionResult OrderDetail(OrderViewModel ovm)
+        {
+            if (ovm == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(ovm);
+        }
+
     }
 }

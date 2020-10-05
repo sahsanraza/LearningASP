@@ -32,6 +32,9 @@
                         <th>
                             Status
                         </th>
+                        <th>
+                            Item Details
+                        </th>
                         <th>Actions</th>
                     </tr>
                     @*To be continued*@
@@ -39,23 +42,45 @@
                     {
                         <tr>
                             <td>
-                                @Html.DisplayFor(modelItem => item.CustomerID)
+                                @item.CustomerName;
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.OrderDate)
+                                @item.OrderDate.ToShortDateString();
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Quantity)
+                                @item.Quantity;
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.TotalPrice)
+                                @item.TotalPrice;
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Description)
+                                @item.Description;
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Status)
+                                @{
+                                    if (item.Status == "Delievered")
+                                    {
+                                        <span class="label label-success">@item.Status;</span>
+                                    }
+                                    else if (item.Status == "Pending")
+                                    {
+                                        <span class="label label-warning">@item.Status;</span>
+                                    }
+                                    else if (item.Status == "Cancelled")
+                                    {
+                                        <span class="label label-danger">@item.Status;</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-default">@item.Status;</span>
+                                    }
+                                }
+
                             </td>
+                            <td>
+                                <a class="btn btn-sm btn-info" href="@Url.Action("OrderDetail","Order")">Item Details</a>
+                            </td>
+
                             <td>
                                 <a href="@Url.Action("Edit","Order", new { id = item.OrderID }))">Edit</a>
                                 <a href="@Url.Action("Delete","Order", new { id = item.OrderID }))">Delete</a>
