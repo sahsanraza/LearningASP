@@ -87,6 +87,13 @@ namespace LearningASP.Models.Services
             var Query = PetaPoco.Sql.Builder.Select("*").From("Orders");
             return dataContext.Fetch<Order>(Query).ToList();
         }
+        public Order GetSelectedOrders(int id)
+        {
+
+            var dataContext = DataContextHelper.GetDataContext();
+            var Query = PetaPoco.Sql.Builder.Select("*").From("Orders").Where("OrderID="+id);
+            return dataContext.Fetch<Order>(Query).FirstOrDefault();
+        }
         public List<OrderDetail> GetOrderItems(int id)
         {
 

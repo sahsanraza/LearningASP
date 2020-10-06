@@ -23,27 +23,57 @@ namespace LearningASP.Controllers
                 ovm.OrderID = ord.OrderID;
                 ovm.OrderDate = ord.OrderDate;
                 ovm.TotalPrice = ord.TotalPrice;
-                ovm.Quantity = ord.Quantity;
+                ovm.Quantity = ord.TotalQuantity;
                 ovm.Description = ord.Description;
                 ovm.Status = ord.Status;
                 Customer cs = DatabaseHelper.Instance.GetCustomer((int)ord.CustomerID);
                 ovm.CustomerName = cs.CustomerName;
                 ovm.CustomerID = cs.CustomerID;
                 List<OrderDetail> items=DatabaseHelper.Instance.GetOrderItems(ord.OrderID);
-                ovm.Items = new List<OrderDetail>();
+                ovm.SelectedItems = new List<OrderDetail>();
+                Item it;
                 foreach (OrderDetail odItem in items)
                 {
-                    ovm.Items.Add(odItem);
+                    it= DatabaseHelper.Instance.GetItem((int)odItem.ItemID);
+                    odItem.ItemName = it.ItemName;
+                    ovm.SelectedItems.Add(odItem);
                 }
                 OrderDetailInfo.Add(ovm);
             }
             return View(OrderDetailInfo);
         }
-        public ActionResult OrderDetail(OrderViewModel ovm)
+        public ActionResult Create()
         {
-            if (ovm == null)
+            OrderViewModel ovm = new OrderViewModel();
+            ovm.AvailableItems = DatabaseHelper.Instance.GetAllItems();
+            ovm.TotalCustomers = DatabaseHelper.Instance.GetAllCustomers();
+            return View(ovm);
+        }
+        public ActionResult OrderDetail(int OrderID=0)
+        {
+            if (OrderID ==0)
             {
                 return RedirectToAction("Index");
+            }
+            OrderViewModel ovm = new OrderViewModel();
+            Order ord = DatabaseHelper.Instance.GetSelectedOrders(OrderID);
+            ovm.OrderID = ord.OrderID;
+            ovm.OrderDate = ord.OrderDate;
+            ovm.TotalPrice = ord.TotalPrice;
+            ovm.Quantity = ord.TotalQuantity;
+            ovm.Description = ord.Description;
+            ovm.Status = ord.Status;
+            Customer cs = DatabaseHelper.Instance.GetCustomer((int)ord.CustomerID);
+            ovm.CustomerName = cs.CustomerName;
+            ovm.CustomerID = cs.CustomerID;
+            List<OrderDetail> items = DatabaseHelper.Instance.GetOrderItems(ord.OrderID);
+            ovm.SelectedItems = new List<OrderDetail>();
+            Item it;
+            foreach (OrderDetail odItem in items)
+            {
+                it = DatabaseHelper.Instance.GetItem((int)odItem.ItemID);
+                odItem.ItemName = it.ItemName;
+                ovm.SelectedItems.Add(odItem);
             }
             return View(ovm);
         }

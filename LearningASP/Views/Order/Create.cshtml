@@ -1,0 +1,208 @@
+﻿@using LearningASP.Models
+@model OrderViewModel
+@{
+    ViewBag.Title = "New Order";
+}
+
+<h2>Add Order</h2>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "orderform" }))
+{
+    @Html.AntiForgeryToken()
+    <input id="SelectedItems" name="SelectedItems" type="hidden" value="" select-id="" />
+    <div class="form-horizontal">
+        <div class="container">
+            <div class="col-md-10 offset-1">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Customer Name</label>
+                        <div class="col-md-10">
+                            <select name="CustomerID" class="form-control">
+                                <option value="">--Select Customer--</option>
+                                @foreach (var cs in Model.TotalCustomers)
+                                {
+                                    <option value="@cs.CustomerID">@cs.CustomerName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">OrderDate</label>
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(model => model.OrderDate, new
+                            { @class = "form-control", @type = "date" })
+                            @Html.ValidationMessageFor(model => model.OrderDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div id="AddItemSection">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="ItemCombo">Item Name</label>
+                            <div class="col-md-10">
+                                <select name="ItemCombo" id="ItemNameCombo" class="form-control">
+                                    <option value="">--Select Item--</option>
+                                    @foreach (var item in Model.AvailableItems)
+                                    {
+                                        <option value="@item.ItemID" item-price="@item.Price">@item.ItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="Price">Price</label>
+                            <div class="col-md-10">
+                                <input class="form-control" readonly type="text" id="ItemPrice" name="Price" value="" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="Quantity">Quantity</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" id="ItemQuantity" name="Quantity" value="" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="SubTotal">SubTotal</label>
+                            <div class="col-md-10">
+                                <input class="form-control" readonly type="text" id="ItemSubTotal" name="SubTotal" value="" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2"> </label>
+                            <div class="col-md-10">
+                                <a href="javascript:;" id="AddItemBtn" class="btn btn-sm btn-primary">Add to List</a>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="ItemTable">
+                        <tr>
+                            <th>No.</th>
+                            <th>Item Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Sub Total</th>
+                        </tr>
+                        @{
+                            var count = 0;
+                        }
+                        @foreach (var item in Model.SelectedItems)
+                        {
+                            <tr>
+                                <td>@count</td>
+                                <td>@item.ItemName</td>
+                                <td>@item.Price</td>
+                                <td>@item.Quantity</td>
+                                @{
+                                    var subt = item.Quantity * item.Price;
+                                    count++;
+                                }
+                                <td>@subt</td>
+                            </tr>
+                        }
+
+                    </table>
+                    <a class="btn btn-sm btn-success" href="#">Print</a>
+                    <a class="btn btn-sm btn-primary" href="@Url.Action("Index","Order")">Back</a>
+                </div>
+            </div>
+        </div>
+        </div>
+}
+        @section Scripts{
+            <script>
+                $(document).ready(function () {
+
+                    $('#ItemNameCombo').change(function () {
+
+                        var price = $(this).children("option:selected").attr('item-price');
+                       
+                        if (price == "--Select Item--") {
+                            return;
+                        }
+                        $('#ItemPrice').val(price + "");
+                          var qty = 1;
+                        $('#ItemQuantity').val(qty);
+                        var subt = qty * price;
+                        $('#ItemSubTotal').val(subt);
+                        var id = $(this).children("option:selected").val();
+                        //$('#SelectedItems').attr('item-id').val(id);
+                        //$.data('input', 'item-id', id);
+                        $('#SelectedItems').val(qty);
+                    });
+                    $('body').on('input','#ItemQuantity',function () {
+                        var qty = $(this).val();
+                        var price = $('#ItemPrice').val();
+                        var subt = qty * price;
+                        $('#ItemSubTotal').val(subt);
+                        $('#SelectedItems').val(qty);
+                    });
+                    $('#AddItemBtn').click(function () {
+                        var id = $('#ItemNameCombo').children("option:selected").val();
+                        var quantity = $('#ItemQuantity').val();
+                        var itemid = $('#ItemNameCombo').children("option:selected").val();
+                        var price = $('#ItemNameCombo').children("option:selected").attr('item-price');
+                        var itemname = $('#ItemNameCombo').children("option:selected").text();
+                        var lastno = $('#ItemTable tr:last').find("td:eq(0)").text();
+                        if (lastno == undefined || lastno == null || lastno=="") {
+                            lastno = 0;
+                        }
+                        lastno = parseInt(lastno) + 1;
+                        var subt=0;
+                        var Found = false; 
+                        jQuery('#ItemTable tr').each(function (index, tr) {
+                            var name = jQuery(this).find("td:eq(1)").text();
+                            var oldprice = jQuery(this).find("td:eq(2)").text();
+                            if (name == itemname && price == oldprice) {
+                                Found = true;
+                                var old = jQuery(this).find("td:eq(3)").text();
+                                var newqty = parseInt(old) + parseInt(quantity);
+                                jQuery(this).find("td:eq(3)").text(newqty);
+                                subt = parseInt(price) * parseInt(newqty);
+                                jQuery(this).find("td:eq(4)").text(subt);
+                            }
+                        });
+                        if (Found == false) {
+                            subt = price * quantity;
+                            var trbody = '<tr> <td>' + lastno + '</td> <td>' + itemname + '</td> <td>' + price + '</td> <td>' + quantity + '</td> <td>' + subt + '</td> </tr>';
+                            $('#ItemTable').append(trbody);
+                        }
+                     
+                        //var jqHelp = $.ajax({
+                        //    type: "GET",
+                        //    URL: "/Order/Create/?id=" + id + " &qty=" + quantity
+                        //}).done(function () {
+                        //    //window.location.replace('/Order/Create/' + ItemId);
+                        //});
+                       
+                       //var jqHelp= $.ajax({
+
+                       //     type: "POST",
+                       //     url: '/Order/Create/',     //your action
+                       //     data: $('#orderform').serialize(),   //your form name.it takes all the values of model               
+                       //     dataType: 'json',
+                       //     success: function (result) {
+                       //         console.log(result);
+                                
+                       //     }
+                       // }).done(function (data) {
+                       //     alert(data);
+                       // });
+                    });
+                });
+            </script>
+        }

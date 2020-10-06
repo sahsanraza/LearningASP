@@ -16,6 +16,9 @@ namespace LearningASP.Models
         public double TotalPrice { get; set; }
         public string Description { get; set; }
         public string Status { get; set; }
-        public List<OrderDetail> Items { get; set; }
+        public List<Customer> TotalCustomers = new List<Customer>();
+        public List<Item> AvailableItems = new List<Item>();
+       public List<OrderDetail> SelectedItems = new List<OrderDetail>();
+      
     }
 }
