@@ -49,6 +49,21 @@ namespace LearningASP.Controllers
             ovm.TotalCustomers = DatabaseHelper.Instance.GetAllCustomers();
             return View(ovm);
         }
+        [HttpPost]
+        public ActionResult Create(OrderViewModel ovm)
+        {
+            int val =(int)ViewData["SelectedItemCount"];
+            Response.Write(val);
+           for(var i = 1; i <=val; i++)
+            {
+                Item obj = new Item();
+                obj.ItemName = (string)ViewData["Name"+i];
+                obj.Price = ViewBag.Price+i;
+                obj.Quantity= ViewBag.Quantity+i;
+                Response.Write(obj.ItemName + " , Price= " + obj.Price + ", Qty= " + obj.Quantity);
+            }
+            return View(ovm);
+        }
         public ActionResult OrderDetail(int OrderID=0)
         {
             if (OrderID ==0)

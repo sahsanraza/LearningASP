@@ -8,7 +8,7 @@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "orderform" }))
 {
     @Html.AntiForgeryToken()
-    <input id="SelectedItems" name="SelectedItems" type="hidden" value="" select-id="" />
+    <input id="SelectedItems" name="SelectedItemCount" type="hidden" value="" select-id="" />
     <div class="form-horizontal">
         <div class="container">
             <div class="col-md-10 offset-1">
@@ -88,10 +88,10 @@
                        
                     </div>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive text-center">
                     <table class="table table-striped table-hover" id="ItemTable">
                         <tr>
-                            <th>No.</th>
+                            <th id="ItemNo" val="0">No.</th>
                             <th>Item Name</th>
                             <th>Price</th>
                             <th>Quantity</th>
@@ -116,8 +116,8 @@
                         }
 
                     </table>
-                    <a class="btn btn-sm btn-success" href="#">Print</a>
-                    <a class="btn btn-sm btn-primary" href="@Url.Action("Index","Order")">Back</a>
+                    <input type="submit" class="btn btn-success" disabled href="@Url.Action("Create","Order")" id="SubmitBtn" value="Confirm Order"/>
+                    <a class="btn btn-primary" href="@Url.Action("Index","Order")">Back</a>
                 </div>
             </div>
         </div>
@@ -174,12 +174,16 @@
                                 jQuery(this).find("td:eq(3)").text(newqty);
                                 subt = parseInt(price) * parseInt(newqty);
                                 jQuery(this).find("td:eq(4)").text(subt);
+                                $('#SubmitBtn').attr("disabled", false);
                             }
                         });
                         if (Found == false) {
                             subt = price * quantity;
-                            var trbody = '<tr> <td>' + lastno + '</td> <td>' + itemname + '</td> <td>' + price + '</td> <td>' + quantity + '</td> <td>' + subt + '</td> </tr>';
+                            var conid = jQuery('#ItemTable tr').find("th:eq(0)").val();
+                            var trbody = '<tr> <td>' + lastno + '</td> <td name="Name' + lastno + '">' + itemname + '</td> <td name="Price' + lastno + '">' + price + '</td> <td name="Quantity' + lastno + '">' + quantity + '</td> <td name="SubTotal' + lastno + '">' + subt + '</td> </tr>';
                             $('#ItemTable').append(trbody);
+                            $("#SubmitBtn").attr("disabled", false);
+                            $('#SelectedItems').val(lastno);
                         }
                      
                         //var jqHelp = $.ajax({
@@ -198,8 +202,9 @@
                        //     success: function (result) {
                        //         console.log(result);
                                 
-                       //     }
-                       // }).done(function (data) {
+                       //    }
+                       //}).done(function (data) {
+                       //    debugger;
                        //     alert(data);
                        // });
                     });
